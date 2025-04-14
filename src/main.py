@@ -1,10 +1,11 @@
 import shutil
+import sys
 
 from textnode import *
 from markdown_blocks import *
 import os
 
-public_path = "public/"
+public_path = "docs/"
 static_path = "static/"
 content_path = "content/"
 template_path = "template.html"
@@ -52,6 +53,8 @@ def generate_page_recursive(from_path, template_path, to_path):
 			md = markdown_to_html_node(contents)
 			html = md.to_html()
 			webpage = template.replace("{{ Title }}", title).replace("{{ Content }}", html)
+			if len(basepath) > 1:
+				webpage = webpage.replace('href="/', f'href="{basepath[1]}').replace('href=/', f'href={basepath[1]}').replace('src=/', f'src={basepath[1]}')
 			with open(to_path + "index.html", "w") as file:
 				file.write(webpage)
 		else:
@@ -59,5 +62,6 @@ def generate_page_recursive(from_path, template_path, to_path):
 				os.mkdir(to_path+item+"/")
 			generate_page_recursive(from_path+item+"/", template_path, to_path+item+"/")
 
-
+basepath = sys.argv
+print(basepath)
 main()
